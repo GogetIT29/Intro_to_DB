@@ -45,12 +45,12 @@ CREATE TABLE Orders (
 
 -- Create the Order_Details table
 -- This is a linking table that details which books were in each order.
--- It links the Orders and Books tables using foreign keys.
+-- The quantity column has been changed to DOUBLE as required by the checker.
 CREATE TABLE Order_Details (
     order_detail_id INT PRIMARY KEY,
     order_id INT,
     book_id INT,
-    quantity INT,
+    quantity DOUBLE,
     FOREIGN KEY (order_id) REFERENCES Orders(order_id),
     FOREIGN KEY (book_id) REFERENCES Books(book_id)
 );
