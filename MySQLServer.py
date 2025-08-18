@@ -11,9 +11,9 @@ DB_PORT = 3306
 
 def create_database(cursor):
     """
-    Creates the 'alx_book_store' database if it does not already exist.
+    Creates the 'alxbookstore' database if it does not already exist.
     """
-    db_name = "alx_book_store"
+    db_name = "alxbookstore"
     try:
         # The 'CREATE DATABASE IF NOT EXISTS' statement ensures the script does not fail if the database already exists.
         cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
