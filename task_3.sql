@@ -1,4 +1,5 @@
--- This script lists all tables in the database specified as an argument.
--- It uses the USE statement to select the database, then SHOW TABLES to list the tables.
+-- Use the alx_book_store database
+USE alx_book_store;
 
+-- List all tables in the database
 SHOW TABLES;
