@@ -1,56 +1,55 @@
-#!/usr/bin/env mysql
--- Create the alx_book_store database if it doesn't already exist
-CREATE DATABASE IF NOT EXISTS alx_book_store;
+#!/usr/bin/python3
+"""
+This script connects to a MySQL server and creates the database
+'alx_book_store' if it does not already exist.
+"""
+import mysql.connector
+from mysql.connector import errorcode
 
--- Use the newly created database
-USE alx_book_store;
+# Your MySQL credentials. In a real-world scenario, these should not be hardcoded.
+# For this task, we assume the user is 'root' with no password.
+DB_USER = "root"
+DB_HOST = "localhost"
 
--- Create the Authors table
--- This table stores information about the authors.
-CREATE TABLE Authors (
-    author_id INT PRIMARY KEY,
-    author_name VARCHAR(215)
-);
+# The name of the database to be created
+DB_NAME = "alx_book_store"
 
--- Create the Books table
--- This table stores information about the books available in the store.
--- The author_id column is a foreign key that links to the Authors table.
-CREATE TABLE Books (
-    book_id INT PRIMARY KEY,
-    title VARCHAR(130),
-    author_id INT,
-    price DOUBLE,
-    publication_date DATE,
-    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
-);
+def create_database():
+    """
+    Establishes a connection to the MySQL server and creates the
+    alx_book_store database if it doesn't exist.
+    """
+    try:
+        # Establish the connection without specifying a database
+        cnx = mysql.connector.connect(user=DB_USER, host=DB_HOST)
+        cursor = cnx.cursor()
 
--- Create the Customers table
--- This table stores information about the customers.
-CREATE TABLE Customers (
-    customer_id INT PRIMARY KEY,
-    customer_name VARCHAR(215),
-    email VARCHAR(215),
-    address TEXT
-);
+        # SQL command to create the database if it does not exist
+        sql_command = "CREATE DATABASE IF NOT EXISTS {}".format(DB_NAME)
+        cursor.execute(sql_command)
 
--- Create the Orders table
--- This table stores information about customer orders.
--- The customer_id is a foreign key linking to the Customers table.
-CREATE TABLE Orders (
-    order_id INT PRIMARY KEY,
-    customer_id INT,
-    order_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
-);
+        # Print success message as required by the task
+        print(f"Database '{DB_NAME}' created successfully!")
 
--- Create the Order_Details table
--- This is a linking table that details which books were in each order.
--- The quantity column has been changed to DOUBLE as required by the checker.
-CREATE TABLE Order_Details (
-    order_detail_id INT PRIMARY KEY,
-    order_id INT,
-    book_id INT,
-    quantity DOUBLE,
-    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
-    FOREIGN KEY (book_id) REFERENCES Books(book_id)
-);
+    except mysql.connector.Error as err:
+        # Handle specific MySQL errors
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Something is wrong with your user name or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            # Print a generic error message for other issues
+            print(f"An error occurred: {err}")
+    except Exception as e:
+        # Handle any other exceptions
+        print(f"An unexpected error occurred: {e}")
+    finally:
+        # This block ensures the cursor and connection are always closed
+        if 'cursor' in locals() and cursor is not None:
+            cursor.close()
+        if 'cnx' in locals() and cnx is not None and cnx.is_connected():
+            cnx.close()
+            print("Database connection closed.")
+
+if __name__ == "__main__":
+    create_database()
